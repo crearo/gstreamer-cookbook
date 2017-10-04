@@ -43,3 +43,17 @@ Here comes one of the more difficult parts of GStreamer. Dynamic pipelines. Thes
 [Implementation of dynamic pipelines in C](/C/dynamic-recording.c).
 
 Use Ctrl+C to start and stop streaming. Every time you start a new recording, a fresh file is created with a new name.
+
+## Installing GStreamer 1.0 packages for Ubuntu
+
+- Open `terminal` and copy-paste the following lines to install all the required packages:
+```
+sudo apt install python-gi python3-gi \
+    gstreamer1.0-tools \
+    gir1.2-gstreamer-1.0 \
+    gir1.2-gst-plugins-base-1.0 \
+    gstreamer1.0-plugins-good \
+    gstreamer1.0-plugins-ugly \
+    gstreamer1.0-plugins-bad \
+    gstreamer1.0-libav
+```
