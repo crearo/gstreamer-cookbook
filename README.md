@@ -44,6 +44,31 @@ Here comes one of the more difficult parts of GStreamer. Dynamic pipelines. Thes
 
 Use Ctrl+C to start and stop streaming. Every time you start a new recording, a fresh file is created with a new name.
 
+## Streaming
+
+Streaming can be of various formats and from various sources.
+
+#### Raw Streaming
+
+For streaming a raw unencoded for example:
+
+*Source:*
+`gst-launch-1.0 -v videotestsrc ! rtpvrawpay ! udpsink host="127.0.0.1" port=5000`
+
+*Client:*
+`gst-launch-1.0 -v udpsrc port=5000 caps = "application/x-rtp, media=(string)video, clock-rate=(int)90000, encoding-name=(string)RAW, width=(string)640, height=(string)480, payload=(int)96, sampling=(string)RGBA, depth=(string)8, a-framerate=30/1" ! rtpvrawdepay ! videoconvert ! queue ! xvimagesink sync=false`
+
+*Note:* Setting caps in the client is absolutely necessary. It is also advisable to set them in the source.
+
+#### H264 Encoded Streaming
+
+*Source:*
+`gst-launch-1.0 -v videotestsrc ! rtpvrawpay ! udpsink host="127.0.0.1" port=5000`
+
+*Client:*
+`gst-launch-1.0 -v udpsrc port=5000 caps = "application/x-rtp, media=(string)video, clock-rate=(int)90000, encoding-name=(string)H264, width=(string)640, height=(string)480, payload=(int)96, a-framerate=30/1" ! rtph264depay ! decodebin ! videoconvert ! queue ! xvimagesink sync=false`
+
+
 ## Installing GStreamer 1.0 packages for Ubuntu
 
 - Open `terminal` and copy-paste the following lines to install all the required packages:
