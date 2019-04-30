@@ -82,3 +82,14 @@ sudo apt install python-gi python3-gi \
     gstreamer1.0-plugins-bad \
     gstreamer1.0-libav
 ```
+
+
+#### Other useful commands
+
+###### Displaying MJPEG stream
+I needed this for the action camera which only gave out mjpeg. 
+
+```
+gst-launch-1.0 -v v4l2src device=/dev/video0 ! image/jpeg,width=640,height=480,framerate=30/1 ! jpegparse ! jpegdec ! videoconvert ! xvimagesink sync=False
+```
+
