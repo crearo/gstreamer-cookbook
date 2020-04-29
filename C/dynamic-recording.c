@@ -6,7 +6,15 @@
 #include <stdio.h>
 #include <string.h>
 
-// v4l2src ! tee name=t t. ! x264enc ! mp4mux ! filesink location=/home/rish/Desktop/okay.264 t. ! videoconvert ! autovideosink
+/*
+
+gst-launch-1.0 videotestsrc num-buffers=100 ! tee name=t
+	t. ! queue ! x264enc tune=zerolatency ! matroskamux ! filesink location=264.mkv
+	t. ! autovideosink
+
+See also:
+	https://gstreamer.freedesktop.org/documentation/x264/index.html?gi-language=c#x264enc-page
+*/
 
 static GMainLoop *loop;
 static GstElement *pipeline, *src, *tee, *encoder, *muxer, *filesink, *videoconvert, *videosink, *queue_record, *queue_display;
@@ -118,6 +126,7 @@ void startRecording() {
     teepad = gst_element_request_pad(tee, templ, NULL, NULL);
 	queue_record = gst_element_factory_make("queue", "queue_record");
 	encoder = gst_element_factory_make("x264enc", NULL);
+	g_object_set(encoder, "tune", "zerolatency", NULL);
 	muxer = gst_element_factory_make("mp4mux", NULL);
 	filesink = gst_element_factory_make("filesink", NULL);
 	char *file_name = (char*) malloc(255 * sizeof(char));
@@ -171,7 +180,7 @@ int main(int argc, char *argv[])
 	gst_init (&argc, &argv);
 
 	pipeline = gst_pipeline_new(NULL);
-	src = gst_element_factory_make("v4l2src", NULL);
+	src = gst_element_factory_make("videotestsrc", NULL);
 	tee = gst_element_factory_make("tee", "tee");
 	queue_display = gst_element_factory_make("queue", "queue_display");
 	videoconvert = gst_element_factory_make("videoconvert", NULL);
