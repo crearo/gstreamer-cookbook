@@ -19,55 +19,50 @@ static char *file_path;
 static gboolean
 message_cb (GstBus * bus, GstMessage * message, gpointer user_data)
 {
-  switch (GST_MESSAGE_TYPE (message)) {
-    case GST_MESSAGE_ERROR:{
-      GError *err = NULL;
-      gchar *name, *debug = NULL;
+	GError *err = NULL;
+	gchar *name, *debug = NULL;
 
-      name = gst_object_get_path_string (message->src);
-      gst_message_parse_error (message, &err, &debug);
+	switch (GST_MESSAGE_TYPE (message)) {
+		case GST_MESSAGE_ERROR:
 
-      g_printerr ("ERROR: from element %s: %s\n", name, err->message);
-      if (debug != NULL)
-        g_printerr ("Additional debug info:\n%s\n", debug);
+			name = gst_object_get_path_string (message->src);
+			gst_message_parse_error (message, &err, &debug);
 
-      g_error_free (err);
-      g_free (debug);
-      g_free (name);
+			g_printerr ("ERROR: from element %s: %s\n", name, err->message);
+			if (debug != NULL)
+				g_printerr ("Additional debug info:\n%s\n", debug);
 
-      g_main_loop_quit (loop);
-      break;
-    }
-    case GST_MESSAGE_WARNING:{
-		GError *err = NULL;
-		gchar *name, *debug = NULL;
+			g_error_free (err);
+			g_free (debug);
+			g_free (name);
 
-		name = gst_object_get_path_string (message->src);
-		gst_message_parse_warning (message, &err, &debug);
+			g_main_loop_quit (loop);
+			break;
+		case GST_MESSAGE_WARNING:
+			name = gst_object_get_path_string (message->src);
+			gst_message_parse_warning (message, &err, &debug);
 
-		g_printerr ("ERROR: from element %s: %s\n", name, err->message);
-		if (debug != NULL)
-		g_printerr ("Additional debug info:\n%s\n", debug);
+			g_printerr ("ERROR: from element %s: %s\n", name, err->message);
+			if (debug != NULL)
+				g_printerr ("Additional debug info:\n%s\n", debug);
 
-		g_error_free (err);
-		g_free (debug);
-		g_free (name);
-		break;
-    }
-    case GST_MESSAGE_EOS:{
-		g_print ("Got EOS\n");
-		g_main_loop_quit (loop);
-		gst_element_set_state (pipeline, GST_STATE_NULL);
-		g_main_loop_unref (loop);
-		gst_object_unref (pipeline);
-		exit(0);
-		break;
+			g_error_free (err);
+			g_free (debug);
+			g_free (name);
+			break;
+		case GST_MESSAGE_EOS:
+			g_print ("Got EOS\n");
+			g_main_loop_quit (loop);
+			gst_element_set_state (pipeline, GST_STATE_NULL);
+			g_main_loop_unref (loop);
+			gst_object_unref (pipeline);
+			exit(0);
+			break;
+		default:
+			break;
 	}
-    default:
-		break;
-  }
 
-  return TRUE;
+	return TRUE;
 }
 
 static GstPadProbeReturn unlink_cb(GstPad *pad, GstPadProbeInfo *info, gpointer user_data) {
@@ -112,10 +107,10 @@ void stopRecording() {
 void startRecording() {
 	g_print("startRecording\n");
 	GstPad *sinkpad;
-    GstPadTemplate *templ;
+	GstPadTemplate *templ;
 
 	templ = gst_element_class_get_pad_template(GST_ELEMENT_GET_CLASS(tee), "src_%u");
-    teepad = gst_element_request_pad(tee, templ, NULL, NULL);
+	teepad = gst_element_request_pad(tee, templ, NULL, NULL);
 	queue_record = gst_element_factory_make("queue", "queue_record");
 	encoder = gst_element_factory_make("x264enc", NULL);
 	muxer = gst_element_factory_make("mp4mux", NULL);
@@ -167,7 +162,7 @@ int main(int argc, char *argv[])
 	file_path = (char*) malloc(255 * sizeof(char));
 	file_path = argv[1];
 
-	signal(SIGINT, sigintHandler);
+	signal(SIGINT, (void*) sigintHandler);
 	gst_init (&argc, &argv);
 
 	pipeline = gst_pipeline_new(NULL);
