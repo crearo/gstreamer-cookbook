@@ -64,10 +64,9 @@ message_cb (GstBus * bus, GstMessage * message, gpointer user_data)
   return TRUE;
 }
 
-int sigintHandler(int unused) {
+void sigintHandler(int unused) {
 	g_print("Sending EoS\n");
 	gst_element_send_event(pipeline, gst_event_new_eos()); 
-	return 0;
 }
 
 int main(int argc, char *argv[])

@@ -145,13 +145,12 @@ void startRecording() {
 	recording = TRUE;
 }
 
-int sigintHandler(int unused) {
+void sigintHandler(int unused) {
 	g_print("You ctrl-c!\n");
 	if (recording)
 		stopRecording();
 	else
 		startRecording();
-	return 0;
 }
 
 int main(int argc, char *argv[])
@@ -170,7 +169,7 @@ int main(int argc, char *argv[])
 	file_path = (char*) malloc(255 * sizeof(char));
 	file_path = argv[1];
 
-	signal(SIGINT, (void*) sigintHandler);
+	signal(SIGINT, sigintHandler);
 	gst_init (&argc, &argv);
 
 	pipeline = gst_pipeline_new(NULL);
