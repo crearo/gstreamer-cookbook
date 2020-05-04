@@ -121,14 +121,13 @@ void startRecording() {
 	teepad = gst_element_request_pad(tee, templ, NULL, NULL);
 	queue_record = gst_element_factory_make("queue", "queue_record");
 	encoder = gst_element_factory_make("x264enc", NULL);
-	g_object_set(encoder, "tune", "zerolatency", NULL);
 	muxer = gst_element_factory_make("mp4mux", NULL);
 	filesink = gst_element_factory_make("filesink", NULL);
 	char *file_name = (char*) malloc(255 * sizeof(char));
 	sprintf(file_name, "%s%d.mp4", file_path, counter++);
 	g_print("Recording to file %s", file_name);
 	g_object_set(filesink, "location", file_name, NULL);
-	g_object_set(encoder, "tune", 4, NULL);
+	g_object_set(encoder, "tune", 4, NULL); // zerolatency
 	free(file_name);
 
 	gst_bin_add_many(GST_BIN(pipeline), gst_object_ref(queue_record), gst_object_ref(encoder), gst_object_ref(muxer), gst_object_ref(filesink), NULL);
