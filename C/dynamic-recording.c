@@ -8,11 +8,17 @@
 
 /*
 
-gst-launch-1.0 videotestsrc num-buffers=100 ! tee name=t
-	t. ! queue ! x264enc tune=zerolatency ! matroskamux ! filesink location=264.mkv
+	GST_DEBUG=3 \
+	gst-launch-1.0 videotestsrc pattern=ball background-color=0x80808080 \
+	num-buffers=100 "video/x-raw,framerate=5/1" ! \
+	tee name=t \
+	t. ! queue ! x264enc tune=zerolatency ! matroskamux ! filesink location=264.mkv \
 	t. ! autovideosink
 
 See also:
+	https://gstreamer.freedesktop.org/documentation/tutorials/basic/dynamic-pipelines.html?gi-language=c
+	https://coaxion.net/blog/2014/01/gstreamer-dynamic-pipelines/
+	https://github.com/sdroege/gst-snippets/blob/217ae015aaddfe3f7aa66ffc936ce93401fca04e/dynamic-filter.c
 	https://gstreamer.freedesktop.org/documentation/x264/index.html?gi-language=c#x264enc-page
 */
 
@@ -174,7 +180,11 @@ int main(int argc, char *argv[])
 
 	pipeline = gst_pipeline_new(NULL);
 	src = gst_element_factory_make("videotestsrc", NULL);
-	tee = gst_element_factory_make("tee", "tee");
+	g_object_set(src, "pattern", 18, NULL); // GST_VIDEO_TEST_SRC_BALL
+	g_object_set(src, "background-color", 0x80808080, NULL);
+	g_object_set(src, "do-timestamp", TRUE, NULL);
+
+	tee = gst_element_factory_make("tee", NULL);
 	queue_display = gst_element_factory_make("queue", "queue_display");
 	videoconvert = gst_element_factory_make("videoconvert", NULL);
 	videosink = gst_element_factory_make("autovideosink", NULL);
